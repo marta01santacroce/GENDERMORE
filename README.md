@@ -17,8 +17,8 @@ Questo progetto implementa un sistema RAG (*Retrieval-Augmented Generation*) bas
 - `save_embeddings_recursive.py`  
   Salvataggio dei documenti nel database PGVector usando uno splitter ricorsivo basato sui caratteri.
   
-- `save_embeddings_cluster_intra_doc.py`  
-  Salvataggio dei documenti nel database PGVector usando uno splitter ricorsivo con l'applicazione dell'algoritmo di clustering HDBSCAN intra document.
+- `create_cluster.py`  
+  Creazione di clusters inter dpcuments con l'applicazione dell'algoritmo HDBSCAN.
   
 - `DB.py`  
   Gestione di tutte le interazioni con il database vettoriale.
@@ -158,6 +158,8 @@ PORT = os.getenv("PORT")
 
 ```
 ## 🧩 Clustering Intra-Documenti e Nuova Pipeline di Caricamento
+
+## da modificare!!!
 
 Sono presenti nuovi script specifici per il caricamento dei documenti, il salvataggio degli embeddings e il clustering intra-documento, da tenere in considerazione se si vuole modificare il sistema di splitting e caricamento attuale.
 
