@@ -7,6 +7,9 @@ import warnings
 from dotenv import load_dotenv
 import os
 
+# per la versione senza pca (che si presuppone sia stata già calcolata):
+# toglirrr tutti i '_256' e modificare reduce_embedding con embedding
+
 warnings.filterwarnings("ignore")
  
 TABLE_NAME = 'embeddings_recursive_cluster_pca'
