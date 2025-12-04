@@ -23,6 +23,9 @@ Questo progetto implementa un sistema RAG (*Retrieval-Augmented Generation*) bas
 - `DB.py`  
   Gestione di tutte le interazioni con il database vettoriale.
 
+- `DB_for_cluster.py`  
+  Gestione di tutte le interazioni con il database vettoriale con cluster.
+
 - `search_with_cluster.py`  
   Recupero dei documenti rilevanti tramite ricerca semantica sul combined_embedding nel clustering inter document e reranking.
 
