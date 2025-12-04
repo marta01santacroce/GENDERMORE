@@ -159,20 +159,10 @@ PORT = os.getenv("PORT")
 ```
 ## 🧩 Clustering Intra-Documenti e Nuova Pipeline di Caricamento
 
-## da modificare!!!
+Sono presenti nuovi script specifici per il caricamento dei documenti, il salvataggio degli embeddings e il clustering inter-document, da tenere in considerazione se si vuole modificare il sistema di splitting e caricamento attuale.
 
-Sono presenti nuovi script specifici per il caricamento dei documenti, il salvataggio degli embeddings e il clustering intra-documento, da tenere in considerazione se si vuole modificare il sistema di splitting e caricamento attuale.
-
-- **save_embeddings_cluster_intra_doc.py**  
-  Salva i documenti nel database usando uno splitter ricorsivo (recursive splitter) per suddividere i documenti in chunk più piccoli.  
-  Applica poi l’algoritmo di clustering **HDBSCAN** all’interno dei singoli documenti, per raggruppare chunk semanticamente simili.  
-  Utilizza vettori di **1024 componenti** e **non fa uso di PCA**, perché è pensato per il caricamento diretto e il clustering immediato, senza riduzione dimensionale (puoi modifcarlo se necessario).
-
-    Parametri da passare in fase di esecuzione:
-
-    a) il path della cartella contenente i file pdf da memorizzare OPPURE il path del singolo file pdf da memorizzare
-
-    b) 'Y' se si vuole inizializzare il DB OPPURE 'N' se non si vuole inizializzare il DB e solo aggiungere dei nuovi file a quelli già presenti
+- **create_cluster.py**  
+  crea i cluster degli embedding nel db. Da modificare il codice se si vuole usare la versione senza pca come viene riporatto nel commento iniziale del codice stesso.
 
 - **DB_for_cluster.py**  
   Gestisce le interazioni con il database vettoriale relative al clustering intra-documento, usato da `save_embeddings_cluster_intra_doc.py`.
@@ -183,13 +173,6 @@ Sono presenti nuovi script specifici per il caricamento dei documenti, il salvat
 ---
 
 ### Importante  
-Se si vuole modificare l’attuale implementazione del recursive splitting presente in `chatbot_gradio.py`, bisogna considerare l’integrazione di questi nuovi file (`save_embeddings_cluster_intra_doc.py`, `DB_for_cluster.py`, `search_with_cluster.py`) e aggiornare il codice di `chatbot_gradio.py` di conseguenza, per mantenere coerenza con il caricamento, il clustering e la ricerca intra-documento.
+Se si vuole modificare l’attuale implementazione del recursive splitting presente in `chatbot_gradio.py`, bisogna considerare l’integrazione di questi nuovi file e aggiornare il codice di `chatbot_gradio.py` di conseguenza, per mantenere coerenza con il caricamento, il clustering e la ricerca inter-document.
 
----
-
-In breve:  
-- `save_embeddings_cluster_intra_doc.py` = caricamento + splitting + clustering HDBSCAN intra-doc  
-- `DB_for_cluster.py` = gestione DB per clustering intra-doc  
-- `search_with_cluster.py` = ricerca semantica sui chunk clusterizzati  
-- Per modificare splitting in `chatbot_gradio.py` serve integrare questi file
 
