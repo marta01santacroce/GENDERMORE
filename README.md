@@ -1,59 +1,60 @@
 # RAG System for Master Thesis  
-## *Ingegneria Informatica - Data Engineering and Analytics (UNIMORE)*
+## *Computer Engineering - Data Engineering and Analytics (UNIMORE)*
 
-Questo progetto implementa un sistema RAG (*Retrieval-Augmented Generation*) basato su modelli LLM di OpenAI e un database vettoriale gestito tramite PGVector.
+This project implements a RAG (*Retrieval-Augmented Generation*) system based on OpenAI LLM models and a vector database managed through PGVector.
 
-## 🗂️ File principali nel repository
+## 🗂️ Main files in the repository
 
 - `chatbot_gradio.py`  
-  Codice per l'interfaccia del chatbot sviluppata con Gradio e basata su LLM (GPT-4o-mini) di OpenAI.
+  Code for the chatbot interface developed with Gradio and based on OpenAI's LLM (GPT-4o-mini).
 
 - `save_embeddings_character.py`  
-  Salvataggio dei documenti nel database PGVector usando il metodo di suddivisione per caratteri.
+  Saves documents into the PGVector database using a character-based splitting method.
 
 - `save_embeddings_semantic.py`  
-  Salvataggio dei documenti nel database PGVector usando uno splitter semantico.
+  Saves documents into the PGVector database using a semantic splitter.
 
 - `save_embeddings_recursive.py`  
-  Salvataggio dei documenti nel database PGVector usando uno splitter ricorsivo basato sui caratteri.
+  Saves documents into the PGVector database using a recursive character-based splitter.
   
 - `create_cluster.py`  
-  Creazione di clusters inter dpcuments con l'applicazione dell'algoritmo HDBSCAN.
+  Creation of inter-document clusters using the HDBSCAN algorithm.
   
 - `DB.py`  
-  Gestione di tutte le interazioni con il database vettoriale.
+  Handles all interactions with the vector database.
 
 - `DB_for_cluster.py`  
-  Gestione di tutte le interazioni con il database vettoriale con cluster.
+  Handles all interactions with the vector database with clustering enabled.
 
 - `search_with_cluster.py`  
-  Recupero dei documenti rilevanti tramite ricerca semantica sul combined_embedding nel clustering inter document e reranking.
+  Retrieval of relevant documents through semantic search on the combined_embedding in inter-document clustering and reranking.
 
 - `search_v2.py`  
-  Recupero dei documenti rilevanti tramite ricerca ibrida e reranking.
+  Retrieval of relevant documents through hybrid search and reranking.
 
 - `evaluation.py`  
-  Valutazione del sistema RAG tramite metriche come BERTScore, BLEU, ROUGE, Recall@K e MRR.
+  Evaluation of the RAG system using metrics such as BERTScore, BLEU, ROUGE, Recall@K, and MRR.
 
 - `load_dataset.py`  
-  Caricamento del dataset contenente coppie domanda/risposta.
+  Loads the dataset containing question/answer pairs.
 
 - `update_name_pdf_and_move_folder.py`  
-  Gestione dei nuovi file PDF: formatta i nomi come richiesto da Gradio e li copia nella cartella `pdf_files`.
+  Handles new PDF files: formats filenames as required by Gradio and copies them into the `pdf_files` folder.
 
 ---
 ## 🛢️ DataBase 
-Per popolare il database con i chunk ottenuti in recursive splitting:
-` python save_embeddings_recursive.py path_name  Y`\
-OSSERVAZIONI:
-- Parametri da passare in fase di esecuzione:
+To populate the database with chunks obtained through recursive splitting:
+` python save_embeddings_recursive.py path_name Y`\
+NOTES:
+- Parameters to pass during execution:
 
-    a) il path della cartella contenente i file pdf da memorizzare OPPURE il path del singolo file pdf da memorizzare
+    a) the path of the folder containing the PDF files to store OR the path of the single PDF file to store
 
-    b) 'Y' se si vuole inizializzare il DB OPPURE 'N' se non si vuole inizializzare il DB e solo aggiungere dei nuovi file a quelli già presenti
+    b) 'Y' if you want to initialize the DB OR 'N' if you only want to add new files without initializing
 
-- La tabella che crea\aggiorna è nominata come  ```python TABLE_NAME = 'embeddings_recursive'``` nel file python. Se si vuole cambiare il nome della tabella bisogna agire sul codice
-- La tabella viene creata dalla seguente funzione da cui si evince la struttura:
+- The table created/updated is named ```python TABLE_NAME = 'embeddings_recursive'``` inside the Python file. If you want to change the table name, modify the code.
+
+- The table is created using the following function:
   ```python
   def create_table(cursor,table_name):
       cursor.execute(f"""CREATE TABLE {table_name} (id SERIAL PRIMARY KEY,content TEXT,
@@ -62,117 +63,115 @@ OSSERVAZIONI:
                                                     tsv_content tsvector DEFAULT NULL, hash_value TEXT)
                       """
                    )
-  ```
 
-## 🚀 Avvio del sistema
 
-Per avviare il chatbot, esegui il file:
+## 🚀 Starting the system
+To start the chatbot, run the file:
 
 ```bash
 python chatbot_gradio.py
 ```
-Questo script utilizza i seguenti moduli fondamentali:
+This script uses the following fundamental modules:
 - `DB.py`
-  per tutte le operazioni con il database vettoriale (PGVector).
+  for all operations with the vector database (PGVector).
 - `save_embeddings_recursive.py`
-  per salvare i documenti nella base di conoscenza utilizzando una suddivisione ricorsiva.
+  to save documents in the knowledge base using recursive subdivision.
 - `update_name_pdf_and_move_folder.py`
-  per formattare i nomi dei file PDF e copiarli correttamente nella cartella dedicata.
+  to format PDF file names and copy them correctly to the dedicated folder.
 
-#### ▶️ Funzionamento
+#### ▶️ How it works
 
-1) Schermata del chatbot:
-   - inserisci la query nello spazio in basso e premi il pulsante laterale destro per inviare la domanda
-   - attendi che il sistema elabori la domanda per leggere la risposta nella schermata centrale
-   - clicca sui links riportati in output per aprire i documenti da cui è stata estrapolata la risposta (in alcuni casi non riesce a evidenziare l'estratto preciso consultato dal pdf a causa di formattazioni        non lineari del documento)
-   - per avviare una nuova chat clicca sul pulsante in alto a sinistra
-   - per scorrere da una conversazione a un altra, sempre a sinistra della schermata, è riportato l'elenco delle chat attive
-2) Schermata caricamento file:
-   - clicca sul primo riquadro per caricare i pdfs (è altamente consigliato max 5 pdfs alla volta)
-   - clicca sul pulsante 'submit' per avviare il processo
-     ⚠️**OSS**: dopo aver cliccato il pulsante di caricamento, non è possibile al momento interrompere il processo. Fai attenzione a ciò che carichi!
-   - attendi che il caricamneto sia completo e visualizza l'output del caricamento nel secondo blocco. Abbi pazienza... il tempo di esecuzione varia in base alle dimensioni dei documenti da salvare.
-   - il pulsante 'Clear All' ha solo il compito di ripulire **visivamente** la schermata. **NON** interrompe il caricamento ma cancella solo i testi nella schermata
-   - mentre attendi il caricamento, puoi ritorare nella schermata del chatbot e continuare la conversazione.
- 3) In questa prima versione non considerare ulteriori tasti/azioni presenti nella schermata. 
-   
-
-
-## 📂 Cartella pdf_files
-
-Assicurati che nella directory principale del progetto sia presente una cartella chiamata pdf_files/.
-
-Tutti i documenti PDF utilizzati dal sistema verranno inseriti in questa cartella dopo l'upload tramite interfaccia o dopo il primo caricamento nel DB tramite lo script python citato precedentemente nella sezione 'DataBase'.
-A causa delle dimensioni, la cartella `files_da_caricare/` con i file da caricare inizialmente nel databse non è presente nel repository.  
-Puoi scaricarla da Google Drive al seguente link:
-🔗 [Scarica pdf_files da Google Drive](https://drive.google.com/file/d/1Nzn8ZO0bOhIyewmZWZIPRk4Gnsp-zeiw/view?usp=drive_link)
+1) Chatbot screen:
+   - enter your query in the space below and press the button on the right to send your question
+   - wait for the system to process the question to read the answer in the central screen
+   - click on the links in the output to open the documents from which the answer was extracted (in some cases, it is not possible to highlight the precise extract consulted from the PDF due to non-linear formatting of the document)
+   - To start a new chat, click on the button at the top left
+   - To scroll from one conversation to another, on the left side of the screen, you will find a list of active chats
+2) File upload screen:
+   - Click on the first box to upload PDFs (we strongly recommend a maximum of 5 PDFs at a time)
+   - Click on the ‘submit’ button to start the process
+     ⚠️**OSS**: once you have clicked the upload button, you cannot interrupt the process. Be careful what you upload!
+   - Wait for the upload to complete and view the upload output in the second block. Please be patient... the execution time varies depending on the size of the documents to be saved.
+   - The ‘Clear All’ button only clears the screen **visually**. It **DOES NOT** interrupt the upload but only deletes the text on the screen.
+   - While waiting for the upload, you can return to the chatbot screen and continue the conversation.
+ 3) In this first version, do not consider any additional buttons/actions on the screen. 
 
 
-Il file `update_name_pdf_and_move_folder.py` si occupa di:
+## 📂 pdf_files folder
 
-- Rinominare i file PDF secondo il formato richiesto da Gradio
-- Copiarli automaticamente nella cartella pdf_files/
+Make sure there is a folder called pdf_files/ in the main directory of the project.
 
-#### ❗ Osservazione
-Porre molta attenzione alla qualità dei dati di input: evitare documenti duplicati nel contenuto (il sistema verifica solo che il nome del documento che si vuole inserire non sia già presente), definire un nome del file che sia privo di caratteri particolari (evitare i '.' nel nome) e *spazi* (usare '_' invece degli spazi), accertarsi che il formato del documento sia pdf e che non sia corrotto (no scansioni/foto), dare un nome al docuemnto significativo e che non sia eccessivamente lungo (limitati a 200 caratteri masssimo).. Inoltre è consigliato caricare un numero limitato di nuovi file nella schermata a ogni round  (circa 5 alla volta).
-## ✅ Requisiti
-Assicurati di avere installato:
-
-- Python 3.10 (il sistema è stato testato con questa versione e non viene quindi assiucrato il funzionamento con versioni precedenti)
-- Le librerie specificate in `requirements.txt`
+All PDF documents used by the system will be placed in this folder after uploading via the interface or after the first upload to the DB via the Python script mentioned earlier in the ‘Database’ section.
+Due to its size, the `files_to_upload/` folder with the files to be initially uploaded to the database is not present in the repository.  
+You can download it from Google Drive at the following link:
+🔗 [Download pdf_files from Google Drive](https://drive.google.com/file/d/1Nzn8ZO0bOhIyewmZWZIPRk4Gnsp-zeiw/view?usp=drive_link)
 
 
-## ⚙️ Configurazione Variabili d'Ambiente
+The file `update_name_pdf_and_move_folder.py` does the following:
 
-Per far funzionare correttamente il progetto, è necessario creare un file `.env` nella directory principale e definire:
+- Renames PDF files according to the format required by Gradio
+- Automatically copies them to the pdf_files/ folder
 
-- la chiave API di OpenAI con la variabile:
+#### ❗ Note
+Pay close attention to the quality of the input data: avoid duplicate documents in the content (the system only checks that the name of the document you want to insert is not already present), define a file name that does not contain special characters (avoid '.' in the name) and *spaces* (use ‘_’ instead of spaces), make sure that the document format is PDF and that it is not corrupted (no scans/photos), give the document a meaningful name that is not too long (limited to a maximum of 200 characters). It is also recommended to upload a limited number of new files to the screen each round (about 5 at a time).
+## ✅ Requirements
+Make sure you have installed:
+
+- Python 3.10 (the system has been tested with this version and therefore is not guaranteed to work with previous versions)
+- The libraries specified in `requirements.txt`
+
+
+## ⚙️ Environment Variable Configuration
+
+For the project to work correctly, you need to create a `.env` file in the main directory and define:
+
+- the OpenAI API key with the variable:
 
 ```env
-OPENAI_API_KEY = la_tua_chiave_openai
+OPENAI_API_KEY = your_openai_key
 ```
 
-- i nomi per le variabili di connessione al database:
+- the names for the database connection variables:
+
 
 ```env
-HOST_NAME = nome_host
-DATABASE_NAME = nome_database
-USER_NAME = nome_utente
+HOST_NAME = host_name
+DATABASE_NAME = database_name
+USER_NAME = user_name
 PASSWORD = password
-PORT = numero_porta
+PORT = port_number
 ```
-Per caricare le variabili presenti nel file `.env` si usa la parte di codice già presente, ossia:
+To load the variables in the `.env` file, use the existing code, i.e.:
 ```python
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv(override=True)
 # Retrieve your API key from your .env file
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-# Parametri  di connessione al DB
-HOST_NAME = os.getenv("HOST_NAME")
-DATABASE_NAME = os.getenv("DATABASE_NAME")
-USER_NAME = os.getenv("USER_NAME")
-PASSWORD = os.getenv("PASSWORD")
-PORT = os.getenv("PORT")
+OPENAI_API_KEY = os.getenv(“OPENAI_API_KEY”)
+# DB connection parameters
+HOST_NAME = os.getenv(“HOST_NAME”)
+DATABASE_NAME = os.getenv(“DATABASE_NAME”)
+USER_NAME = os.getenv(“USER_NAME”)
+PASSWORD = os.getenv(“PASSWORD”)
+PORT = os.getenv(“PORT”)
 
 ```
-## 🧩 Clustering Intra-Documenti e Nuova Pipeline di Caricamento
+## 🧩 Intra-Document Clustering and New Upload Pipeline
 
-Sono presenti nuovi script specifici per il caricamento dei documenti, il salvataggio degli embeddings e il clustering inter-document, da tenere in considerazione se si vuole modificare il sistema di splitting e caricamento attuale.
+There are new specific scripts for uploading documents, saving embeddings, and inter-document clustering, which should be taken into consideration if you want to modify the current splitting and upload system.
 
-- **create_cluster.py**  
-  crea i cluster degli embedding nel db. Da modificare il codice se si vuole usare la versione senza pca come viene riporatto nel commento iniziale del codice stesso.
+- **create_cluster.py**
+creates embedding clusters in the database. Modify the code if you want to use the version without PCA, as reported in the initial comment of the code itself.
 
 - **DB_for_cluster.py**  
-  Gestisce le interazioni con il database vettoriale relative al clustering intra-documento, usato da `save_embeddings_cluster_intra_doc.py`.
+  Manages interactions with the vector database.
 
-- **search_with_cluster.py**  
-  Script per effettuare ricerche semantiche sui chunk clusterizzati, usando il vettore combinato (combined_embedding) prodotto in fase di caricamento e clustering.
+- **search_with_cluster.py**
+Script for performing semantic searches on clustered chunks, using the combined vector (combined_embedding) produced during loading and clustering.
 
 ---
-
-### Importante  
-Se si vuole modificare l’attuale implementazione del recursive splitting presente in `chatbot_gradio.py`, bisogna considerare l’integrazione di questi nuovi file e aggiornare il codice di `chatbot_gradio.py` di conseguenza, per mantenere coerenza con il caricamento, il clustering e la ricerca inter-document.
+### Important
+If you want to modify the current recursive splitting implementation in `chatbot_gradio.py`, you should consider integrating these new files and updating the `chatbot_gradio.py` code accordingly, to maintain consistency with loading, clustering, and inter-document search.
 
 
