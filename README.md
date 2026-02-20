@@ -1,4 +1,4 @@
-[Paper Accepted at IRCDL 2026](https://ircdl2026.unimore.it/)]
+[Paper Accepted at IRCDL 2026](https://ircdl2026.unimore.it/)
 
 This work introduces MAGDA (Multi-document Aggregation via Global Document-level clustering Architecture),
 a domain-specific RAG system that uses a clustering-based chunking and retrieval strategy to capture semantic
