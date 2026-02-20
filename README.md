@@ -1,7 +1,11 @@
-# RAG System for Master Thesis  
-## *Computer Engineering - Data Engineering and Analytics (UNIMORE)*
+[Paper Accepted at IRCDL 2026](https://ircdl2026.unimore.it/)]
 
-This project implements a RAG (*Retrieval-Augmented Generation*) system based on OpenAI LLM models and a vector database managed through PGVector.
+This work introduces MAGDA (Multi-document Aggregation via Global Document-level clustering Architecture),
+a domain-specific RAG system that uses a clustering-based chunking and retrieval strategy to capture semantic
+relations across documents in the Gender*More corpus. By aggregating inter-document information, MAGDA
+improves the grounding and relevance of generated answers. We evaluate the system on a curated set of real
+queries and validated responses, showing that domain-adapted RAG pipelines combined with cross-document
+processing significantly enhance information access and explainability in specialized scientific digital libraries.
 
 ## 🗂️ Main files in the repository
 
